@@ -1,0 +1,19 @@
+#<IfModule mod_rewrite.c>
+#    RewriteCond %{HTTPS} off
+#    RewriteRule (.*) https://adcampus.online/$1 [R=301,L,QSA]
+#</IfModule>
+
+# Activar RewriteEngine    
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+
+# Reescribir la URL solicitada
+# Entrada: nombre/medidas/ (ejemplo: nombre/23x34)
+# Salida: nombre.php?medidas=23x34
+RewriteRule ^index/([a-zA-Z0-9_-]+)$  ./index.php?view=$1 [L]
+
+# ErrorDocument 404 http://www.upntru.online/error.php
+# ErrorDocument 404 http://localhost/nuevo/error.php
