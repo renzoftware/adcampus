@@ -96,11 +96,11 @@
                                             <button style="font-size: 1.3rem !important;" class="mb-2 mr-2 btn btn-light "><b><?php echo $row_campus->UExp_vNombre; ?></b></button>
                                         </h5>
                                         <h6 class="mt-1 mb-1">
-                                            <a href="javascript:void(0);" class="mb-2 mr-2 badge badge-info"><?php echo $row_campus->total_pendiente; ?> Pendientes</a>
+                                            <a href="javascript:void(0);" class="mb-2 mr-2 badge badge-info btn_estado_campus_modal" data-xcampus="<?php echo $row_campus->UExp_nIdUnExp; ?>" data-xestado="1" ><?php echo $row_campus->total_pendiente; ?> Pendientes</a>
 
-                                            <a href="javascript:void(0);" class="mb-2 mr-2 badge badge-warning"><?php echo $row_campus->total_encurso; ?> En Curso</a>
+                                            <a href="javascript:void(0);" class="mb-2 mr-2 badge badge-warning btn_estado_campus_modal" data-xcampus="<?php echo $row_campus->UExp_nIdUnExp; ?>" data-xestado="2"><?php echo $row_campus->total_encurso; ?> En Curso</a>
 
-                                            <a href="javascript:void(0);" class="mb-2 mr-2 badge badge-success text-dark"><?php echo $row_campus->total_solucion; ?> Solucionado</a>
+                                            <a href="javascript:void(0);" class="mb-2 mr-2 badge badge-success text-dark btn_estado_campus_modal" data-xcampus="<?php echo $row_campus->UExp_nIdUnExp; ?>" data-xestado="3"><?php echo $row_campus->total_solucion; ?> Solucionado</a>
                                         </h6>
                                     </div>
 
@@ -535,6 +535,130 @@
             }
 
             $lista_incidentes = IncidentesData::getListaIncEstado_ByEstadoRango($estado, $rango);
+
+            ?>
+            <div class="card-header opacity-9 bg-<?php echo $bg_title; ?>" >ESTADO &nbsp;<?php echo $text_title; ?></div>
+            <?php
+            foreach ($lista_incidentes as $row_incidente){
+                /* Obtener Tecnico */
+                $user_tecnico = UserData::getById($row_incidente->Inc_User_id);
+
+                /* Obtener foto */
+                $file = $GLOBALS['ruta_base'].'img/incidentes/'.$row_incidente->Inc_nIdIncidente.'.jpg';
+                $name_imagen = buscar_existe_foto($file);
+                $name_imagen = str_replace($GLOBALS['ruta_base'], "../", $name_imagen);
+
+                /* Obtener foto_solucion */
+                $file = $GLOBALS['ruta_base'].'img/atenciones/'.$row_incidente->Inc_nIdIncidente.'.jpg';
+                $name_imagen_sol = buscar_existe_foto($file);
+                $name_imagen_sol = str_replace($GLOBALS['ruta_base'], "../", $name_imagen_sol);
+
+                /* Color segun estado */
+                $text_estado_color = "info";
+                if($row_incidente->Inc_cEstadoAtencion == 2){
+                    $text_estado_color = "warning";
+                }
+
+                /* Obtene fecha "Hace ..." */
+                $fecha_creacion  = new DateTime($row_incidente->Inc_vFechaReporte);
+                // $lbl_dias = ago($fecha_creacion->getTimestamp());
+                $fecha_solucion  = new DateTime($row_incidente->Inc_vFechaSolucion);
+
+                $fecha_reporte = strftime("Reportado: %d-%b", $fecha_creacion->getTimestamp());
+                $fecha_solucion = strftime("Solución: %d-%b", $fecha_solucion->getTimestamp());
+            ?>
+            <li class="list-group-item">
+                <div class="todo-indicator bg-<?php echo $text_estado_color; ?>">
+                </div>
+                <div class="widget-content p-0">
+                    <div>
+                        <div class="mb-0 mr-0 badge badge-<?php echo $text_estado_color; ?>">
+                            Ticket <b>#<?php echo $row_incidente->Inc_vNroTicket; ?></b>
+                        </div>
+                        <div class="mb-0 mr-0 badge badge-pill badge-secondary">
+                            <?php echo $fecha_reporte; ?>
+                        </div>
+                        <?php if ($estado == 3) { ?>
+                        <div class="mb-0 mr-0 badge badge-pill badge-success">
+                            <?php echo $fecha_solucion; ?>
+                        </div>
+                        <?php } ?>
+                    </div>
+                    <div class="widget-content-wrapper">
+                        <div class="widget-content-left mr-2 mt-1">
+                            <div class="widget-content-left">
+                                <img class="rounded " src="<?php echo $name_imagen; ?>" alt="" width="42" data-action="zoom">
+                            </div>
+                            <?php if ($estado == 3) { ?>
+                            <div class="widget-content-left mt-1">
+                                <img class="rounded " src="<?php echo $name_imagen_sol; ?>" alt="" width="42" data-action="zoom">
+                            </div>
+                            <?php } ?>
+                        </div>
+                        <div class="widget-content-left">
+                            <div class="widget-heading mt-0 mb-0">
+                                Descripcion: <?php echo $row_incidente->Inc_vDescripcion; ?>
+                            </div>
+                            <div class="widget-subheading mt-0 mb-0">
+                                <div> 
+                                    <span class="pr-0 opacity-6">
+                                        <i class="fa fa-user"></i>
+                                    </span><?php echo $user_tecnico->name." ".$user_tecnico->lastname ; ?>
+                                </div>
+                            </div>
+                            <div class="widget-subheading mt-0 mb-0">
+                                <div> 
+                                    Comentario: <?php echo ($row_incidente->Inc_vComentario==""?"<i>Ninguno</i>":$row_incidente->Inc_vComentario); ?>
+                                </div>
+                            </div>
+                            <div class="widget-subheading mt-0 mb-0">
+                                <div> 
+                                    Material: <?php echo ($row_incidente->Inc_vMaterial==""?"<i>Ninguno</i>":$row_incidente->Inc_vMaterial); ?>
+                                </div>
+                                <div>
+                                    <button class="mb-1 mt-1 btn-icon btn-shadow btn-outline-2x btn btn-outline-dark btn-sm">
+                                        <i class="lnr-apartment btn-icon-wrapper"></i><?php echo $row_incidente->UExp_vNombre;?>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+            </li>
+
+            <?php
+            }
+            
+            break;
+
+        case 6:
+            $estado = $_POST["estado"];
+            $id_campus = $_POST["campus"];
+
+            $text_title = "";
+            $bg_title = "";
+            switch ($estado) {
+                case 1:
+                    $text_title = "<span class='text-white h5'> <b>PENDIENTE</b> </span>";
+                    $bg_title = "info";
+                    break;
+                
+                case 2:
+                    $text_title = "<span class='text-white h5'> <b>EN CURSO</b> </span>";
+                    $bg_title = "warning";
+                    break;
+                
+                case 3:
+                    $text_title = "<span class='text-white h5 parpadea'> <b>SOLUCIONADO</b> </span>";
+                    $bg_title = "success";
+                    break;
+                
+                default:
+                    $text_title = "NN";
+                    break;
+            }
+
+            $lista_incidentes = IncidentesData::getListaIncEstado_ByEstadoCampusRango($estado, $id_campus, $rango);
 
             ?>
             <div class="card-header opacity-9 bg-<?php echo $bg_title; ?>" >ESTADO &nbsp;<?php echo $text_title; ?></div>

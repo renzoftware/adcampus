@@ -451,6 +451,21 @@ class IncidentesData {
 		return Model::many($query[0], new IncidentesData());
 	}
 
+	public static function getListaIncEstado_ByEstadoCampusRango($estado, $campus, $rango){
+		$sql = "SELECT 
+					*
+				FROM incidentes 
+				INNER JOIN uexp ON uexp.UExp_nIdUnExp = incidentes.Inc_UExp_nIdUnExp
+				WHERE incidentes.Inc_cEstado = 1 
+					AND uexp.UExp_nIdUnExp = $campus 
+					AND incidentes.Inc_cEstadoAtencion = $estado
+					AND incidentes.Inc_vFechaReporte >= CURDATE() - INTERVAL {$rango} DAY  
+					ORDER BY incidentes.Inc_vFechaReporte DESC "; 
+					// var_dump($sql);
+		$query = Executor::doit($sql);
+		return Model::many($query[0], new IncidentesData());
+	}
+
 	public static function getListaInc_ByIdCampusAndRango($id_campus, $rango){
 		$sql = "SELECT 
 					incidentes.Inc_nIdIncidente,

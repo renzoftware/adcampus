@@ -7,7 +7,7 @@ date_default_timezone_set("America/Lima");
 $GLOBALS['entorno']='LOCAL';  // LOCAL O WEB
 
 if($GLOBALS['entorno'] == "LOCAL")
-	$GLOBALS['ruta_base']='C:/xampp/htdocs/renzot/'; /* LOCAL */
+	$GLOBALS['ruta_base']='C:/xampp/htdocs/adcampus/'; /* LOCAL */
 else
 	$GLOBALS['ruta_base']='https://www.adcampus.online/'; /* WEB */
 

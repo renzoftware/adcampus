@@ -239,6 +239,18 @@
                     });
                 })
 
+                $(".btn_estado_campus_modal").click(function(){
+
+                    var estado = $(this).data("xestado");
+                    var campus = $(this).data("xcampus");
+                    $(".container-right-rt").html("")
+                    carga_DetalleEstadoCampus(estado, campus);
+
+                    $(".app-drawer-wrapper").addClass("drawer-open");
+                    $(".app-drawer-overlay").removeClass("d-none");
+
+                })
+
                 $('#page-loader').fadeOut(500);
             }
         });
@@ -650,7 +662,7 @@
         });
     }
 
-    /* FUNCIONES PARA TAB SOLUCIONADOS */
+    /* FUNCIONES PARA TAB ESTADO GENERAL */
     function carga_DetalleEstadoGeneral(estado){
         var rango = $("#txt_rango").val();
         $.ajax({
@@ -716,6 +728,74 @@
                         }
                     });
                 })
+
+                $('#page-loader').fadeOut(500);
+            }
+        });
+    }
+
+    /* FUNCIONES PARA TAB ESTADO POR CAMPUS */
+    function carga_DetalleEstadoCampus(estado, campus){
+        var rango = $("#txt_rango").val();
+        $.ajax({
+            type: "POST",
+            url: "../?action=incidentesger_load",
+            data: {
+                opt : 6,
+                rango: rango,
+                estado: estado,
+                campus: campus
+            },
+            beforeSend: function() {
+                $('#page-loader').fadeIn(500);
+            },
+            success: function(data) {
+                $(".container-right-rt").html(data);
+            },
+            error: function(xhr,textStatus,err){
+                console.log("readyState: " + xhr.readyState);
+                console.log("responseText: "+ xhr.responseText);
+                console.log("status: " + xhr.status);
+                console.log("text status: " + textStatus);
+                console.log("error: " + err);
+            },
+            complete: function() {
+                // $(".list-group-flush2").toggle();
+                // $(".card-usuario").click(function(){
+                //     $(this).find(".list-group-flush2").fadeIn(500);
+                // })
+
+                // $(".btn_usuarios_prio").click(function(){
+                //     var xusuario =  $(this).data("xusuario");
+                //     var xprio = $(this).data("xprio");
+                //     var temp = $(this).parents('ul.sub2').find('ul');
+                //     $.ajax({
+                //         type: "POST",
+                //         url: "../?action=incidentesger_load", 
+                //         data: {
+                //             rango : rango,
+                //             opt : 4,
+                //             usuario : xusuario,
+                //             prio : xprio
+                //         },
+                //         beforeSend: function() {
+                //           $('#page-loader').fadeIn(500);
+                //         },
+                //         success: function(data) {
+                //             temp.html(data);                 
+                //         },
+                //         error: function(xhr,textStatus,err){
+                //             console.log("readyState: " + xhr.readyState);
+                //             console.log("responseText: "+ xhr.responseText);
+                //             console.log("status: " + xhr.status);
+                //             console.log("text status: " + textStatus);
+                //             console.log("error: " + err);
+                //         },
+                //         complete: function() {
+                //             $('#page-loader').fadeOut(500);
+                //         }
+                //     });
+                // })
 
                 $('#page-loader').fadeOut(500);
             }
